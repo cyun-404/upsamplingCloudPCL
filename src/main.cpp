@@ -24,19 +24,22 @@ void upsampling(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& input_cloud,
 
     mls.setComputeNormals(true);
     mls.setInputCloud(input_cloud);
-    mls.setSearchMethod(kd_tree);
-    mls.setSearchRadius(search_radius);
+    mls.setSearchMethod(kd_tree); // Provide a pointer to the search object
+    mls.setSearchRadius(search_radius); //Set the sphere radius that is to be used for determining the k-nearest neighbors used for fitting
     mls.setUpsamplingMethod(
         pcl::MovingLeastSquares<pcl::PointXYZRGB, pcl::PointXYZRGB>::UpsamplingMethod::SAMPLE_LOCAL_PLANE);
-    mls.setUpsamplingRadius(sampling_radius);
-    mls.setUpsamplingStepSize(step_size);
-    mls.setPolynomialOrder(pol_order);
-    mls.setSqrGaussParam(gauss_param);  // (the square of the search radius works best in general)
-    mls.setCacheMLSResults(true);       // Set whether the mls results should be stored for each point in the input cloud.
-    mls.setNumberOfThreads(num_threats);
+    //	Set the upsampling method to be used
+    
+    mls.setUpsamplingRadius(sampling_radius); // SAMPLE_LOCAL_PLANE upsampling(샘플링할 local point plane 에서 원의 반지름)
+    
+    mls.setUpsamplingStepSize(step_size); //Set the step size for the local plane sampling
+    mls.setPolynomialOrder(pol_order);    // Set the order of the polynomial to be fit
+    mls.setSqrGaussParam(gauss_param);    // Set the parameter used for distance based weighting of neighbors (the square of the search radius works best in general)
+    mls.setCacheMLSResults(true);         // Set whether the mls results should be stored for each point in the input cloud.
+    mls.setNumberOfThreads(num_threats);  //Set the maximum number of threads to use
     // mls.setDilationVoxelSize();//Used only in the VOXEL_GRID_DILATION upsampling method
     // mls.setPointDensity(15); //15
-    mls.process(*dense_points);
+    mls.process(*dense_points); // Base method for surface reconstruction for all points given in <setInputCloud (), setIndices ()>
 
     *output_cloud = *input_cloud;
     *output_cloud += *dense_points;
